@@ -1,3 +1,7 @@
+// GEE Script: LST and NDVI Export
+// Run in Google Earth Engine Code Editor: https://code.earthengine.google.com
+// Landsat 8 Collection 2 Level 2, Summer 2020 (June-August), cloud cover < 20%
+
 // Load NYC boundary
 var nyc = ee.FeatureCollection("projects/ee-gyang03/assets/nyc_boundary");
 Map.centerObject(nyc, 10);
