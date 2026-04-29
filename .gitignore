@@ -4,5 +4,4 @@ nhgis0003_shape/
 
 #file types
 *.csv
-*.tif
 *.geojson
