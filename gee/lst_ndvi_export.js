@@ -93,8 +93,6 @@ var landCover = nlcd.select("landcover").clip(nyc);
 // Fractional Impervious Surface (2019 in GEE, closest available)
 var impervious = nlcd.select("impervious").clip(nyc);
 
-var treeCanopy = ee.Image("USGS/NLCD_RELEASES/2019_REL/NLCD/2019_AK_CANOPY")
-
 // Tree Canopy Cover
 var treeCanopy = ee.ImageCollection("USGS/NLCD_RELEASES/2016_REL")
   .filter(ee.Filter.eq("system:index", "2016"))

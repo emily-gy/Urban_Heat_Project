@@ -1,0 +1,11 @@
+Moran's I on OLS residuals
+==========================
+N blocks         : 37,274
+Weights          : KNN, k=8, row-standardized
+Moran's I        : 0.8662
+Expected I       : -0.0000
+z-score          : 348.52
+p-value (perm)   : 0.0010
+Permutations     : 999
+
+Interpretation   : Strong positive spatial autocorrelation in residuals — the OLS model leaves systematic spatial structure unexplained, consistent with Tobler's First Law. A spatial regression model (e.g. spatial lag or spatial error) would likely yield more accurate inference.
