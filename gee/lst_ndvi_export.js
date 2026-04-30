@@ -1,6 +1,20 @@
-// GEE Script: LST and NDVI Export
-// Run in Google Earth Engine Code Editor: https://code.earthengine.google.com
-// Landsat 8 Collection 2 Level 2, Summer 2020 (June-August), cloud cover < 20%
+// GEE Script: Export LST, NDVI, NLCD Land Cover, Impervious Surface, and Tree Canopy for NYC
+// Platform: Google Earth Engine Code Editor (https://code.earthengine.google.com)
+// Data sources:
+//   - Landsat 8 Collection 2 Level 2 (Surface Reflectance + Surface Temperature)
+//   - NLCD 2019 (Land Cover & Impervious Surface)
+//   - NLCD Tree Canopy (2016, latest available in GEE)
+//
+// Processing details:
+//   - Study area: New York City boundary (user asset)
+//   - Time period: Summer 2020 (June–August)
+//   - Cloud filtering: Scenes with <20% cloud cover + QA-based masking (cloud, shadow, water)
+//   - Outputs:
+//       * Land Surface Temperature (LST, °C)
+//       * NDVI
+//       * Land Cover (NLCD 2019)
+//       * Impervious Surface (%)
+//       * Tree Canopy Cover (%)
 
 // Load NYC boundary
 var nyc = ee.FeatureCollection("projects/ee-gyang03/assets/nyc_boundary");
@@ -65,6 +79,57 @@ Export.image.toDrive({
   description: "NYC_NDVI_Summer2020",
   folder: "UHI_Project",
   fileNamePrefix: "nyc_ndvi_2020",
+  region: nyc.geometry(),
+  scale: 30,
+  crs: "EPSG:4326",
+  maxPixels: 1e9
+});
+
+var nlcd = ee.Image("USGS/NLCD_RELEASES/2019_REL/NLCD/2019");
+
+// Land Cover (for grass extraction)
+var landCover = nlcd.select("landcover").clip(nyc);
+
+// Fractional Impervious Surface (2019 in GEE, closest available)
+var impervious = nlcd.select("impervious").clip(nyc);
+
+var treeCanopy = ee.Image("USGS/NLCD_RELEASES/2019_REL/NLCD/2019_AK_CANOPY")
+
+// Tree Canopy Cover
+var treeCanopy = ee.ImageCollection("USGS/NLCD_RELEASES/2016_REL")
+  .filter(ee.Filter.eq("system:index", "2016"))
+  .first()
+  .select("percent_tree_cover")
+  .clip(nyc);
+
+// Export all three
+Export.image.toDrive({
+  image: treeCanopy,
+  description: "NYC_TreeCanopy_2019",
+  folder: "UHI_Project",
+  fileNamePrefix: "nyc_tree_canopy_2019",
+  region: nyc.geometry(),
+  scale: 30,
+  crs: "EPSG:4326",
+  maxPixels: 1e9
+});
+
+Export.image.toDrive({
+  image: landCover,
+  description: "NYC_LandCover_2019",
+  folder: "UHI_Project",
+  fileNamePrefix: "nyc_landcover_2019",
+  region: nyc.geometry(),
+  scale: 30,
+  crs: "EPSG:4326",
+  maxPixels: 1e9
+});
+
+Export.image.toDrive({
+  image: impervious,
+  description: "NYC_Impervious_2019",
+  folder: "UHI_Project",
+  fileNamePrefix: "nyc_impervious_2019",
   region: nyc.geometry(),
   scale: 30,
   crs: "EPSG:4326",
